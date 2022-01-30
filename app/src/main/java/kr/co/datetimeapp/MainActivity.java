@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.Chronometer;
+import android.widget.DatePicker;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -17,12 +18,13 @@ import android.widget.TimePicker;
 public class MainActivity extends AppCompatActivity {
 
     Chronometer chronometer;
-    Button btnStart, btnEnd;
+    //Button btnStart, btnEnd;
     RadioButton rdoCal, rdoTime;
-    CalendarView calendarView;
+    //CalendarView calendarView;
+    DatePicker datePicker;
     TimePicker timePicker;
     TextView tvYear, tvMonth, tvDay, tvHour, tvMinute;
-    int selectYear, selectMonth, selectDay;
+    //int selectYear, selectMonth, selectDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
         setTitle("시간 예약");
 
         // 버튼
-        btnStart = findViewById(R.id.btnStart);
-        btnEnd = findViewById(R.id.btnEnd);
+        //btnStart = findViewById(R.id.btnStart);
+        //btnEnd = findViewById(R.id.btnEnd);
 
         // 크로노미터
         chronometer = findViewById(R.id.chronometer);
@@ -46,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
         // FrameLayout의 2개 위젯
         timePicker = findViewById(R.id.timePicker);
-        calendarView = findViewById(R.id.calendarView);
+        //calendarView = findViewById(R.id.calendarView);
+        datePicker = findViewById(R.id.datePicker);
 
         // 텍스트뷰 중에서 연,월,일,시,분 숫자
         tvYear = findViewById(R.id.tvYear);
@@ -57,13 +60,18 @@ public class MainActivity extends AppCompatActivity {
 
         // 처음에는 2개를 안보이게 설정
         timePicker.setVisibility(View.INVISIBLE);
-        calendarView.setVisibility(View.INVISIBLE);
+        //calendarView.setVisibility(View.INVISIBLE);
+        datePicker.setVisibility(View.INVISIBLE);
+
+        rdoCal.setVisibility(View.INVISIBLE);
+        rdoTime.setVisibility(View.INVISIBLE);
 
         rdoCal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 timePicker.setVisibility(View.INVISIBLE);
-                calendarView.setVisibility(View.VISIBLE);
+                //calendarView.setVisibility(View.VISIBLE);
+                datePicker.setVisibility(View.VISIBLE);
             }
         });
 
@@ -72,11 +80,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 timePicker.setVisibility(View.VISIBLE);
-                calendarView.setVisibility(View.INVISIBLE);
+                //calendarView.setVisibility(View.INVISIBLE);
+                datePicker.setVisibility(View.INVISIBLE);
             }
         });
 
         // 타이머 설정
+/*
+
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,8 +96,21 @@ public class MainActivity extends AppCompatActivity {
                 chronometer.setTextColor(Color.RED);
             }
         });
+*/
 
+        // 크로노미터를 클릭하면 => 타이머 시작
+        chronometer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                chronometer.start();
+                chronometer.setTextColor(Color.RED);
+                rdoCal.setVisibility(View.VISIBLE);
+                rdoTime.setVisibility(View.VISIBLE);
+            }
+        });
 
+/*
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView calendarView, int i, int i1, int i2) {
@@ -110,8 +134,34 @@ public class MainActivity extends AppCompatActivity {
                 tvHour.setText(Integer.toString(timePicker.getCurrentHour()));
                 tvMinute.setText(Integer.toString(timePicker.getCurrentMinute()));
             }
+        });*/
+
+
+        // 크로노미터를 롱클릭하면 => 타이머 중지
+        tvYear.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                chronometer.stop();
+                chronometer.setTextColor(Color.BLUE);
+
+                tvYear.setText(Integer.toString(datePicker.getYear()));
+                tvMonth.setText(Integer.toString(1 + datePicker.getMonth()));
+                tvDay.setText(Integer.toString(datePicker.getDayOfMonth()));
+
+                tvHour.setText(Integer.toString(timePicker.getCurrentHour()));
+                tvMinute.setText(Integer.toString(timePicker.getCurrentMinute()));
+
+                rdoCal.setVisibility(View.INVISIBLE);
+                rdoTime.setVisibility(View.INVISIBLE);
+                timePicker.setVisibility(View.INVISIBLE);
+                datePicker.setVisibility(View.INVISIBLE);
+
+                return false;
+            }
         });
+
     }
+
 }
 
 
